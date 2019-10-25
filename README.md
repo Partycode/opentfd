@@ -11,8 +11,8 @@ Compiled versions is on [releases of this repo](https://github.com/mediatube/ope
 
 ### For non-compiled versions
 1. `pip3 install -r reqirements.txt`
-2. Add [API token and hash](https://core.telegram.org/api/obtaining_api_id) to secret.template.py and rename it to secret.py
-3. `python3 opentfd.py`
+2. Add [API token and hash](https://core.telegram.org/api/obtaining_api_id) to private_settings.template.py and rename it to private_settings.py
+3. `python3 opentfd.py` Use `-p` if need proxy
 
 ### Dependencies
 * Latest version of Telethon: http://telethon.readthedocs.io/en/stable/

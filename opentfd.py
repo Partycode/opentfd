@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+import getopt
+import sys
 import asyncio
 from datetime import timedelta
 from time import time, sleep
@@ -6,23 +11,22 @@ from contextlib import suppress
 import mtranslate
 from telethon import TelegramClient, events, sync, errors, custom
 from telethon.tl.types import UpdateDraftMessage
-from proxy import mediatube_proxy
+
 from supported_langs import supported_langs
-import secret
-import getopt
-import re
-import sys
+import settings.private_settings as private_settings
+from settings.settings import *
 
 default_proxy = None
 try:
     opts, args = getopt.getopt(sys.argv[1:], 'p', ['proxy'])
     for opt, arg in opts:
         if opt in ('-p', '--proxy'):
-            default_proxy = mediatube_proxy
+            default_proxy = private_settings.def_proxy
 except getopt.GetoptError:
     sys.exit(2)
 
-client = TelegramClient('opentfd_session', secret.api_id, secret.api_hash, proxy=default_proxy).start()
+client = TelegramClient(SESSION_FILE_PATH, private_settings.api_id, private_settings.api_hash,
+                        proxy=default_proxy).start()
 last_msg = None
 break_time = None
 last_msg_time = time()
@@ -204,9 +208,9 @@ async def merger(event: custom.Message):
 
 
 final_credits = ["OpenTFD is running", "Do not close this window", "t.me/mediatube_stream",
-                 "https://github.com/mediatube/opentfd\n", "Supported languages:", ''
-                 ]
-
+                 "https://github.com/mediatube/opentfd", '']
 print('\n'.join(final_credits))
+
+print("Supported languages:")
 print('\n'.join([f'{k:<25}/{v}' for k, v in supported_langs.items()]))
 client.run_until_disconnected()
