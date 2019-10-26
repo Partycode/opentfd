@@ -34,6 +34,8 @@ MERGE_TIMEOUT = 30
 merge_semaphore = asyncio.Semaphore(value=1)
 draft_semaphore = asyncio.Semaphore(value=1)
 
+is_merger_on = True
+
 
 async def run_command_shell(cmd, e):
     process = await asyncio.create_subprocess_shell(
@@ -164,8 +166,30 @@ async def bash(e: events.NewMessage.Event):
         print('timeout!')
 
 
+@client.on(events.NewMessage(pattern=r'((^!merger (.+))|(^!merger$))', outgoing=True))
+async def merger_control(event: events.NewMessage.Event):
+    cmd = event.pattern_match.group(1).strip().split(' ')[-1]
+    print(cmd)
+    global is_merger_on
+    prefix = ''
+    if cmd == 'on' and not is_merger_on:
+        is_merger_on = True
+        prefix = 'change '
+
+    if cmd == 'off' and is_merger_on:
+        is_merger_on = False
+        prefix = 'change '
+
+    await event.edit('{}merger status: {}'.format(prefix, 'on' if is_merger_on else 'off'))
+    await asyncio.sleep(3)
+    await event.delete()
+
+
 @client.on(events.NewMessage(outgoing=True))
 async def merger(event: custom.Message):
+    if not is_merger_on:
+        return
+
     global last_msg
     global break_time
     global last_msg_time
