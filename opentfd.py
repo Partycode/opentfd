@@ -166,6 +166,14 @@ async def bash(e: events.NewMessage.Event):
         print('timeout!')
 
 
+def is_command(text):
+    commands = ['!type->', '!bash', '!merger']
+    for cmd in commands:
+        if text.startswith(cmd):
+            return True
+    return False
+
+
 @client.on(events.NewMessage(pattern=r'((^!merger (.+))|(^!merger$))', outgoing=True))
 async def merger_control(event: events.NewMessage.Event):
     cmd = event.pattern_match.group(1).strip().split(' ')[-1]
@@ -198,7 +206,7 @@ async def merger(event: custom.Message):
     event_time = time()
     with suppress(Exception):
         if event.text:
-            if event.text.startswith('!bash'):
+            if is_command(event.text):
                 return
         with suppress(Exception):
             if event.chat:
